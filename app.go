@@ -101,12 +101,9 @@ func (app *App) touchFile(file string) error {
 	}
 
 	source := app.resolveTemplatePath(file)
+	templateExists := true
 	if stat, err := os.Stat(source); os.IsNotExist(err) {
-		if err := createFile(file); err != nil {
-			return err
-		}
-		app.logger.Printf("create empty file %s\n", file)
-		return nil
+		templateExists = false
 	} else if err != nil {
 		return err
 	} else if stat.IsDir() {
@@ -119,12 +116,21 @@ func (app *App) touchFile(file string) error {
 		}
 	}
 
-	if err := renderTemplate(source, file); err != nil {
-		return err
-	}
+	if templateExists {
+		if err := renderTemplate(source, file); err != nil {
+			return err
+		}
 
-	app.logger.Printf("create from template: %s -> %s\n", source, file)
-	return nil
+		app.logger.Printf("create from template: %s -> %s\n", source, file)
+		return nil
+	} else {
+		if err := createFile(file); err != nil {
+			return err
+		}
+
+		app.logger.Printf("create empty file %s\n", file)
+		return nil
+	}
 }
 
 func (app *App) resolveTemplatePath(file string) string {
