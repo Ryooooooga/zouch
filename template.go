@@ -8,6 +8,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/stoewer/go-strcase"
 )
 
 type definedValues struct {
@@ -23,12 +25,18 @@ func renderTemplate(source string, destination string) error {
 	defer output.Close()
 
 	tpl := template.New(path.Base(source)).Funcs(template.FuncMap{
-		"Shell":      shell,
-		"DateFormat": dateFormat,
-		"Now":        time.Now,
-		"Base":       path.Base,
-		"Dir":        path.Dir,
-		"Getwd":      os.Getwd,
+		"Shell":          shell,
+		"DateFormat":     dateFormat,
+		"Now":            time.Now,
+		"Base":           path.Base,
+		"Dir":            path.Dir,
+		"Getwd":          os.Getwd,
+		"LowerCamelCase": strcase.LowerCamelCase,
+		"UpperCamelCase": strcase.UpperCamelCase,
+		"SnakeCase":      strcase.SnakeCase,
+		"UpperSnakeCase": strcase.UpperSnakeCase,
+		"KebabCase":      strcase.KebabCase,
+		"UpperKebabCase": strcase.UpperKebabCase,
 	})
 
 	tpl, err = tpl.ParseFiles(source)
