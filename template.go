@@ -26,11 +26,11 @@ func renderTemplate(source string, destination string) error {
 
 	tpl := template.New(path.Base(source)).Funcs(template.FuncMap{
 		"Shell":          shell,
-		"DateFormat":     dateFormat,
 		"Now":            time.Now,
 		"Base":           path.Base,
 		"Dir":            path.Dir,
 		"Getwd":          os.Getwd,
+		"Getenv":         os.Getenv,
 		"LowerCamelCase": strcase.LowerCamelCase,
 		"UpperCamelCase": strcase.UpperCamelCase,
 		"SnakeCase":      strcase.SnakeCase,
@@ -75,8 +75,4 @@ func shell(command string) (string, error) {
 	output = strings.TrimSuffix(output, "\n")
 	output = strings.TrimSuffix(output, "\r")
 	return output, nil
-}
-
-func dateFormat(format string, t time.Time) string {
-	return t.Format(format)
 }
