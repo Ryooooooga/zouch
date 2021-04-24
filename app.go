@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 )
 
 type App struct {
@@ -70,14 +71,59 @@ func (app *App) addTemplateFile(file string) error {
 	} else {
 		app.logger.Printf("add new template: %s -> %s", file, destination)
 	}
+
 	return nil
 }
 
 func (app *App) touchFiles(files []string) error {
 	for _, file := range files {
-		_ = file
+		if err := app.touchFile(file); err != nil {
+			return err
+		}
 	}
 
+	return nil
+}
+
+func (app *App) touchFile(file string) error {
+	if stat, err := os.Stat(file); os.IsNotExist(err) {
+		// File does not exist (ok)
+	} else if err != nil {
+		return err
+	} else if stat.IsDir() {
+		return fmt.Errorf("%s is a directory", file)
+	} else if !app.forceFlag {
+		if err := updateTimestamp(file, time.Now()); err != nil {
+			return err
+		}
+		app.logger.Printf("update timestamp of %s\n", file)
+		return nil
+	}
+
+	source := app.resolveTemplatePath(file)
+	if stat, err := os.Stat(source); os.IsNotExist(err) {
+		if err := createFile(file); err != nil {
+			return err
+		}
+		app.logger.Printf("create empty file %s\n", file)
+		return nil
+	} else if err != nil {
+		return err
+	} else if stat.IsDir() {
+		return fmt.Errorf("template %s is a directory", source)
+	}
+
+	if app.createDirFlag {
+		if err := os.MkdirAll(path.Dir(file), 0755); err != nil {
+			return err
+		}
+	}
+
+	if err := renderTemplate(source, file); err != nil {
+		return err
+	}
+
+	app.logger.Printf("create from template: %s -> %s\n", source, file)
 	return nil
 }
 
