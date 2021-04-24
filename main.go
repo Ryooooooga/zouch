@@ -9,9 +9,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const version = "0.1.0"
-
-var revision = "HEAD"
+var (
+	version = "dev"
+	commit  = "HEAD"
+	date    = "unknown"
+)
 
 func main() {
 	if err := newCliApp().Run(os.Args); err != nil {
@@ -55,7 +57,7 @@ func newCliApp() *cli.App {
 		Name:                   "zouch",
 		Usage:                  "Create a new file from a template",
 		UsageText:              "zouch [files...]\n   zouch --add [files...]",
-		Version:                fmt.Sprintf("%s (rev: %s)", version, revision),
+		Version:                fmt.Sprintf("%s, rev: %s, built at %s", version, commit, date),
 		Flags:                  flags,
 		HideHelpCommand:        true,
 		Action:                 runCommand,
