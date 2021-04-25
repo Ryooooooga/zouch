@@ -2,11 +2,19 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"time"
+
+	"github.com/Ryooooooga/zouch/pkg/file"
+)
+
+const (
+	DirectoryPermission = 0755
+	FilePermission      = 0644
 )
 
 type App struct {
@@ -35,17 +43,17 @@ func (app *App) addTemplateFiles(files []string) error {
 	return nil
 }
 
-func (app *App) addTemplateFile(file string) error {
-	if stat, err := os.Stat(file); os.IsNotExist(err) {
-		return fmt.Errorf("%s does not exist", file)
+func (app *App) addTemplateFile(filename string) error {
+	if stat, err := os.Stat(filename); os.IsNotExist(err) {
+		return fmt.Errorf("%s does not exist", filename)
 	} else if err != nil {
 		return err
 	} else if stat.IsDir() {
-		return fmt.Errorf("%s is a directory", file)
+		return fmt.Errorf("%s is a directory", filename)
 	}
 
 	overwriteTemplate := false
-	destination := app.resolveTemplatePath(file)
+	destination := app.resolveTemplatePath(filename)
 	if stat, err := os.Stat(destination); os.IsNotExist(err) {
 		// File does not exist (ok)
 	} else if err != nil {
@@ -58,18 +66,18 @@ func (app *App) addTemplateFile(file string) error {
 		overwriteTemplate = true
 	}
 
-	if err := os.MkdirAll(path.Dir(destination), 0755); err != nil {
+	if err := os.MkdirAll(path.Dir(destination), DirectoryPermission); err != nil {
 		return err
 	}
 
-	if err := copyFile(file, destination); err != nil {
+	if err := file.Copy(filename, destination); err != nil {
 		return err
 	}
 
 	if overwriteTemplate {
-		app.logger.Printf("overwrite template: %s -> %s", file, destination)
+		app.logger.Printf("overwrite template: %s -> %s", filename, destination)
 	} else {
-		app.logger.Printf("add new template: %s -> %s", file, destination)
+		app.logger.Printf("add new template: %s -> %s", filename, destination)
 	}
 
 	return nil
@@ -85,22 +93,22 @@ func (app *App) touchFiles(files []string) error {
 	return nil
 }
 
-func (app *App) touchFile(file string) error {
-	if stat, err := os.Stat(file); os.IsNotExist(err) {
+func (app *App) touchFile(filename string) error {
+	if stat, err := os.Stat(filename); os.IsNotExist(err) {
 		// File does not exist (ok)
 	} else if err != nil {
 		return err
 	} else if stat.IsDir() {
-		return fmt.Errorf("%s is a directory", file)
+		return fmt.Errorf("%s is a directory", filename)
 	} else if !app.forceFlag {
-		if err := updateTimestamp(file, time.Now()); err != nil {
+		if err := file.UpdateTimestamp(filename, time.Now()); err != nil {
 			return err
 		}
-		app.logger.Printf("update timestamp of %s\n", file)
+		app.logger.Printf("update timestamp of %s\n", filename)
 		return nil
 	}
 
-	source := app.resolveTemplatePath(file)
+	source := app.resolveTemplatePath(filename)
 	templateExists := true
 	if stat, err := os.Stat(source); os.IsNotExist(err) {
 		templateExists = false
@@ -111,24 +119,24 @@ func (app *App) touchFile(file string) error {
 	}
 
 	if app.createDirFlag {
-		if err := os.MkdirAll(path.Dir(file), 0755); err != nil {
+		if err := os.MkdirAll(path.Dir(filename), DirectoryPermission); err != nil {
 			return err
 		}
 	}
 
 	if templateExists {
-		if err := renderTemplate(source, file); err != nil {
+		if err := renderTemplate(source, filename); err != nil {
 			return err
 		}
 
-		app.logger.Printf("create from template: %s -> %s\n", source, file)
+		app.logger.Printf("create from template: %s -> %s\n", source, filename)
 		return nil
 	} else {
-		if err := createFile(file); err != nil {
+		if err := ioutil.WriteFile(filename, []byte{}, FilePermission); err != nil {
 			return err
 		}
 
-		app.logger.Printf("create empty file %s\n", file)
+		app.logger.Printf("create empty file %s\n", filename)
 		return nil
 	}
 }

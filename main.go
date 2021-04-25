@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Ryooooooga/zouch/pkg/config"
 	"github.com/urfave/cli/v2"
 )
 
@@ -78,7 +79,7 @@ func runCommand(c *cli.Context) error {
 	}
 
 	logger := newLogger(verboseFlag)
-	rootDir := getRootDir()
+	rootDir := config.GetRootDir()
 
 	app := newApp(logger, rootDir, createDirFlag, forceFlag)
 
