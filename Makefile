@@ -11,6 +11,10 @@ deps:
 zouch: $(shell find . -name "*.go")
 	go build -v
 
+.PHONY: test
+test: deps
+	go test -v ./...
+
 .PHONY: clean
 clean:
 	${RM} zouch

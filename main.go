@@ -79,7 +79,7 @@ func runCommand(c *cli.Context) error {
 	}
 
 	logger := newLogger(verboseFlag)
-	rootDir := config.GetRootDir()
+	rootDir := config.NewConfig().RootDir()
 
 	app := newApp(logger, rootDir, createDirFlag, forceFlag)
 
