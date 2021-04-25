@@ -11,12 +11,14 @@ func TestRootDir(t *testing.T) {
 		zouchRoot     string
 	}
 	type scenario struct {
+		name            string
 		expectedRootDir string
 		envs            envs
 	}
 
 	scenarios := []scenario{
 		{
+			name:            "default root dir",
 			expectedRootDir: "/home/USER/.config/zouch",
 			envs: envs{
 				home:          "/home/USER",
@@ -25,6 +27,7 @@ func TestRootDir(t *testing.T) {
 			},
 		},
 		{
+			name:            "respect XDG_CONFIG_HOME",
 			expectedRootDir: "/home/USER/xdgConfig/zouch",
 			envs: envs{
 				home:          "/home/USER",
@@ -33,6 +36,7 @@ func TestRootDir(t *testing.T) {
 			},
 		},
 		{
+			name:            "respect ZOUCH_ROOT",
 			expectedRootDir: "/tmp/zouch",
 			envs: envs{
 				home:          "/home/USER",
@@ -43,7 +47,7 @@ func TestRootDir(t *testing.T) {
 	}
 
 	for _, s := range scenarios {
-		t.Run(s.expectedRootDir, func(t *testing.T) {
+		t.Run(s.name, func(t *testing.T) {
 			c := newTestConfig(s.envs.home, s.envs.xdgConfigHome, s.envs.zouchRoot)
 
 			if rootDir := c.RootDir(); rootDir != s.expectedRootDir {
