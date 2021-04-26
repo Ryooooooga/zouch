@@ -1,5 +1,12 @@
 export GO111MODULE=on
 
+VERSION := dev
+COMMIT  := $(shell git rev-parse --short HEAD)
+DATE    := $(shell date "+%Y-%m-%d %H:%M:%S")
+LDFLAGS := -X "main.version=${VERSION}"
+LDFLAGS += -X "main.commit=${COMMIT}"
+LDFLAGS += -X "main.date=${DATE}"
+
 .PHONY: all
 all: deps zouch
 
@@ -9,7 +16,7 @@ deps:
 	go mod tidy
 
 zouch: $(shell find . -name "*.go")
-	go build -v
+	go build -v --ldflags='${LDFLAGS}'
 
 .PHONY: test
 test: deps

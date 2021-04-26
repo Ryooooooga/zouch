@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ type App struct {
 	forceFlag     bool
 }
 
-func newApp(logger *log.Logger, rootDir string, createDirFlag bool, forceFlag bool) *App {
+func NewApp(logger *log.Logger, rootDir string, createDirFlag bool, forceFlag bool) *App {
 	return &App{
 		logger,
 		rootDir,
@@ -32,7 +32,7 @@ func newApp(logger *log.Logger, rootDir string, createDirFlag bool, forceFlag bo
 	}
 }
 
-func (app *App) addTemplateFiles(files []string) error {
+func (app *App) AddTemplateFiles(files []string) error {
 	for _, file := range files {
 		if err := app.addTemplateFile(file); err != nil {
 			return err
@@ -82,7 +82,7 @@ func (app *App) addTemplateFile(filename string) error {
 	return nil
 }
 
-func (app *App) touchFiles(files []string) error {
+func (app *App) TouchFiles(files []string) error {
 	for _, file := range files {
 		if err := app.touchFile(file); err != nil {
 			return err
