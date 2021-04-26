@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	DirectoryPermission = 0755
-	FilePermission      = 0644
+	directoryPermission = 0755
 )
 
 type App struct {
@@ -65,7 +64,7 @@ func (app *App) addTemplateFile(filename string) error {
 		overwriteTemplate = true
 	}
 
-	if err := os.MkdirAll(path.Dir(destination), DirectoryPermission); err != nil {
+	if err := os.MkdirAll(path.Dir(destination), directoryPermission); err != nil {
 		return err
 	}
 
@@ -121,7 +120,7 @@ func (app *App) touchFile(filename string) error {
 	}
 
 	if app.createDirFlag {
-		if err := os.MkdirAll(path.Dir(filename), DirectoryPermission); err != nil {
+		if err := os.MkdirAll(path.Dir(filename), directoryPermission); err != nil {
 			return err
 		}
 	}
