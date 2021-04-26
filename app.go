@@ -101,7 +101,10 @@ func (app *App) touchFile(filename string) error {
 	} else if stat.IsDir() {
 		return fmt.Errorf("%s is a directory", filename)
 	} else if !app.forceFlag {
-		if err := file.UpdateTimestamp(filename, time.Now()); err != nil {
+		t := time.Now()
+		atime := t
+		mtime := t
+		if err := os.Chtimes(filename, atime, mtime); err != nil {
 			return err
 		}
 		app.logger.Printf("update timestamp of %s\n", filename)
