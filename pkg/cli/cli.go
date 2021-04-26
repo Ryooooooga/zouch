@@ -10,11 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-type Cli struct {
-	cliApp *cli.App
-}
-
-func New(version string) *Cli {
+func New(version string) *cli.App {
 	var authors = []*cli.Author{
 		{Name: "Ryooooooga", Email: "eial5q265e5+github@gmail.com"},
 	}
@@ -46,31 +42,23 @@ func New(version string) *Cli {
 		},
 	}
 
-	cliApp := &cli.App{
+	const usage = `zouch [files...]
+   zouch --add [files...]`
+
+	return &cli.App{
 		Name:                   "zouch",
 		Usage:                  "Create a new file from a template",
-		UsageText:              "zouch [files...]\n   zouch --add [files...]",
+		UsageText:              usage,
 		Version:                version,
 		Flags:                  flags,
 		HideHelpCommand:        true,
+		Action:                 runCommand,
 		Authors:                authors,
 		UseShortOptionHandling: true,
 	}
-
-	c := &Cli{
-		cliApp,
-	}
-
-	c.cliApp.Action = c.runCommand
-
-	return c
 }
 
-func (c *Cli) Run(args []string) error {
-	return c.cliApp.Run(args)
-}
-
-func (c *Cli) runCommand(ctx *cli.Context) error {
+func runCommand(ctx *cli.Context) error {
 	addFlag := ctx.Bool("add")
 	createDirFlag := ctx.Bool("r")
 	forceFlag := ctx.Bool("force")
@@ -84,12 +72,12 @@ func (c *Cli) runCommand(ctx *cli.Context) error {
 	logger := newLogger(verboseFlag)
 	rootDir := config.NewConfig().RootDir()
 
-	a := app.NewApp(logger, rootDir, createDirFlag, forceFlag)
+	app := app.NewApp(logger, rootDir, createDirFlag, forceFlag)
 
 	if addFlag {
-		return a.AddTemplateFiles(files)
+		return app.AddTemplateFiles(files)
 	} else {
-		return a.TouchFiles(files)
+		return app.TouchFiles(files)
 	}
 }
 
