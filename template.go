@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -17,13 +18,7 @@ type definedValues struct {
 	TemplatePath string
 }
 
-func renderTemplate(source string, destination string) error {
-	output, err := os.Create(destination)
-	if err != nil {
-		return err
-	}
-	defer output.Close()
-
+func renderTemplate(output io.Writer, source string, destination string) error {
 	tpl := template.New(path.Base(source)).Funcs(template.FuncMap{
 		"Shell":          shell,
 		"Now":            time.Now,
@@ -39,7 +34,7 @@ func renderTemplate(source string, destination string) error {
 		"UpperKebabCase": strcase.UpperKebabCase,
 	})
 
-	tpl, err = tpl.ParseFiles(source)
+	tpl, err := tpl.ParseFiles(source)
 	if err != nil {
 		return err
 	}

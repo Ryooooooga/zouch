@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -127,21 +126,23 @@ func (app *App) touchFile(filename string) error {
 		}
 	}
 
-	if templateExists {
-		if err := renderTemplate(source, filename); err != nil {
-			return err
-		}
+	output, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer output.Close()
 
-		app.logger.Printf("create from template: %s -> %s\n", source, filename)
-		return nil
-	} else {
-		if err := ioutil.WriteFile(filename, []byte{}, FilePermission); err != nil {
-			return err
-		}
-
+	if !templateExists {
 		app.logger.Printf("create empty file %s\n", filename)
 		return nil
 	}
+
+	if err := renderTemplate(output, source, filename); err != nil {
+		return err
+	}
+
+	app.logger.Printf("create from template: %s -> %s\n", source, filename)
+	return nil
 }
 
 func (app *App) resolveTemplatePath(file string) string {
