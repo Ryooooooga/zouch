@@ -31,7 +31,7 @@ func newCliApp() *cli.App {
 		&cli.BoolFlag{
 			Name:     "add",
 			Aliases:  []string{"A"},
-			Usage:    "add [files...] as templates",
+			Usage:    "add [files...] as new templates",
 			Required: false,
 		},
 		&cli.BoolFlag{
