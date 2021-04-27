@@ -9,6 +9,7 @@ import (
 	"github.com/Ryooooooga/zouch/pkg/commands"
 	"github.com/Ryooooooga/zouch/pkg/config"
 	"github.com/Ryooooooga/zouch/pkg/errors"
+	"github.com/Ryooooooga/zouch/pkg/repositories"
 	"github.com/urfave/cli/v2"
 )
 
@@ -78,9 +79,11 @@ func runCommand(ctx *cli.Context) error {
 
 	output := os.Stdout
 	logger := newLogger(verboseFlag)
-	rootDir := config.NewConfig().RootDir()
 
-	cmd := commands.NewCommand(output, logger, rootDir, createDirFlag, forceFlag)
+	rootDir := config.NewConfig().RootDir()
+	templates := repositories.NewTemplateRepository(rootDir)
+
+	cmd := commands.NewCommand(output, logger, templates, createDirFlag, forceFlag)
 
 	var err error
 	if listFlag {
