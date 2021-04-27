@@ -1,12 +1,14 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
 
-	"github.com/Ryooooooga/zouch/pkg/app"
+	"github.com/Ryooooooga/zouch/pkg/commands"
 	"github.com/Ryooooooga/zouch/pkg/config"
+	"github.com/Ryooooooga/zouch/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,6 +18,12 @@ func New(version string) *cli.App {
 	}
 
 	var flags = []cli.Flag{
+		&cli.BoolFlag{
+			Name:     "list",
+			Aliases:  []string{"l"},
+			Usage:    "list template files",
+			Required: false,
+		},
 		&cli.BoolFlag{
 			Name:     "add",
 			Aliases:  []string{"A"},
@@ -43,7 +51,8 @@ func New(version string) *cli.App {
 	}
 
 	const usage = `zouch [files...]
-   zouch --add [files...]`
+   zouch --list
+   zouch --add  [files...]`
 
 	return &cli.App{
 		Name:                   "zouch",
@@ -59,26 +68,35 @@ func New(version string) *cli.App {
 }
 
 func runCommand(ctx *cli.Context) error {
+	listFlag := ctx.Bool("list")
 	addFlag := ctx.Bool("add")
+
 	createDirFlag := ctx.Bool("r")
 	forceFlag := ctx.Bool("force")
 	verboseFlag := ctx.Bool("verbose")
 	files := ctx.Args().Slice()
 
-	if len(files) == 0 {
-		cli.ShowAppHelpAndExit(ctx, 1)
-	}
-
+	output := os.Stdout
 	logger := newLogger(verboseFlag)
 	rootDir := config.NewConfig().RootDir()
 
-	app := app.NewApp(logger, rootDir, createDirFlag, forceFlag)
+	cmd := commands.NewCommand(output, logger, rootDir, createDirFlag, forceFlag)
 
-	if addFlag {
-		return app.AddTemplateFiles(files)
+	var err error
+	if listFlag {
+		err = cmd.List(files)
+	} else if addFlag {
+		err = cmd.Add(files)
 	} else {
-		return app.TouchFiles(files)
+		err = cmd.Touch(files)
 	}
+
+	if errors.IsShowHelpAndExitError(err) {
+		cli.ShowAppHelp(ctx)
+		fmt.Fprintln(ctx.App.Writer)
+	}
+
+	return err
 }
 
 func newLogger(verbose bool) *log.Logger {
