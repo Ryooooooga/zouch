@@ -27,3 +27,24 @@ func TestTemplateExistError(t *testing.T) {
 		}
 	})
 }
+
+func TestTemplateNotExistError(t *testing.T) {
+	t.Run("TemplateNotExistError.Error()", func(t *testing.T) {
+		err := errors.TemplateNotExistError("test error message %d", 42)
+		if err.Error() != "test error message 42" {
+			t.Fatalf("err.Error() != %v, actual %v", "test error message 42", err.Error())
+		}
+	})
+
+	t.Run("IsTemplateNotExistError", func(t *testing.T) {
+		err := errors.TemplateNotExistError("")
+		if !errors.IsTemplateNotExistError(err) {
+			t.Fatalf("IsTemplateNotExistError(err) must return true")
+		}
+
+		err = fmt.Errorf("")
+		if errors.IsTemplateNotExistError(err) {
+			t.Fatalf("IsTemplateNotExistError(err) must return false")
+		}
+	})
+}

@@ -1,26 +1,18 @@
 package file
 
 import (
-	"io"
+	"fmt"
 	"os"
 )
 
-func Copy(source string, destination string) error {
-	input, err := os.Open(source)
-	if err != nil {
-		return err
+func IsFile(filename string) (bool, error) {
+	if stat, err := os.Stat(filename); os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	} else if stat.IsDir() {
+		return false, fmt.Errorf("%s is a directory", filename)
+	} else {
+		return true, nil
 	}
-	defer input.Close()
-
-	output, err := os.Create(destination)
-	if err != nil {
-		return err
-	}
-	defer output.Close()
-
-	if _, err := io.Copy(output, input); err != nil {
-		return err
-	}
-
-	return nil
 }

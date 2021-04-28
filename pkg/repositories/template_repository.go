@@ -1,18 +1,23 @@
 package repositories
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
+	"github.com/Ryooooooga/zouch/pkg/file"
 )
+
+type TemplateFile struct {
+	Path    string
+	Content []byte
+}
 
 type TemplateRepository interface {
 	ListTemplates() ([]string, error)
 	AddTemplate(filename string, content []byte, overwrite bool) (overwritten bool, err error)
-	FindTemplate(filename string) (string, error)
+	FindTemplate(filename string) (TemplateFile, error)
 	TemplatePathOf(filename string) string
 }
 
@@ -54,16 +59,9 @@ func (r *templateRepository) ListTemplates() ([]string, error) {
 func (r *templateRepository) AddTemplate(filename string, content []byte, overwrite bool) (bool, error) {
 	templatePath := r.TemplatePathOf(filename)
 
-	var templateExists bool
-	if stat, err := os.Stat(templatePath); os.IsNotExist(err) {
-		// `templatePath` does not exist (ok)
-		templateExists = false
-	} else if err != nil {
-		return false, nil
-	} else if stat.IsDir() {
-		return false, fmt.Errorf("%s is a directory", templatePath)
-	} else {
-		templateExists = true
+	templateExists, err := file.IsFile(templatePath)
+	if err != nil {
+		return false, err
 	}
 
 	if templateExists && !overwrite {
@@ -81,8 +79,21 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 	return templateExists, nil
 }
 
-func (r *templateRepository) FindTemplate(filename string) (string, error) {
-	panic("unimplemented")
+func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error) {
+	basename := path.Base(filename)
+	templatePath := path.Join(r.rootDir, basename)
+
+	content, err := ioutil.ReadFile(templatePath)
+	if os.IsNotExist(err) {
+		return TemplateFile{}, errors.TemplateNotExistError("%s does not exist", templatePath)
+	} else if err != nil {
+		return TemplateFile{}, err
+	}
+
+	return TemplateFile{
+		Path:    templatePath,
+		Content: content,
+	}, nil
 }
 
 func (r *templateRepository) TemplatePathOf(filename string) string {

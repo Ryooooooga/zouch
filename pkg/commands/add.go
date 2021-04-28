@@ -30,15 +30,15 @@ func (cmd *Command) addFile(filename string) error {
 		return err
 	}
 
-	overwritten, err := cmd.templates.AddTemplate(filename, content, cmd.force)
+	overwritten, err := cmd.Templates.AddTemplate(filename, content, cmd.Force)
 	if err != nil {
 		return err
 	}
 
 	if overwritten {
-		fmt.Fprintf(cmd.output, "%s <- %s (overwrite)\n", cmd.templates.TemplatePathOf(filename), filename)
+		cmd.Logger.Printf("%s <- %s (overwrite)\n", cmd.Templates.TemplatePathOf(filename), filename)
 	} else {
-		fmt.Fprintf(cmd.output, "%s <- %s\n", cmd.templates.TemplatePathOf(filename), filename)
+		cmd.Logger.Printf("%s <- %s\n", cmd.Templates.TemplatePathOf(filename), filename)
 	}
 
 	return nil

@@ -9,6 +9,7 @@ import (
 	"github.com/Ryooooooga/zouch/pkg/commands"
 	"github.com/Ryooooooga/zouch/pkg/config"
 	"github.com/Ryooooooga/zouch/pkg/errors"
+	"github.com/Ryooooooga/zouch/pkg/renderer"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
 	"github.com/urfave/cli/v2"
 )
@@ -82,8 +83,16 @@ func runCommand(ctx *cli.Context) error {
 
 	rootDir := config.NewConfig().RootDir()
 	templates := repositories.NewTemplateRepository(rootDir)
+	renderer := renderer.NewTextTemplateRenderer()
 
-	cmd := commands.NewCommand(output, logger, templates, createDirFlag, forceFlag)
+	cmd := commands.NewCommand(
+		output,
+		logger,
+		templates,
+		renderer,
+		createDirFlag,
+		forceFlag,
+	)
 
 	var err error
 	if listFlag {
