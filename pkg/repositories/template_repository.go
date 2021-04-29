@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"sort"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
 )
@@ -53,6 +54,7 @@ func (r *templateRepository) ListTemplates() ([]string, error) {
 		}
 	}
 
+	sort.Strings(list)
 	return list, nil
 }
 

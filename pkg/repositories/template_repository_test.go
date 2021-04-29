@@ -2,9 +2,9 @@ package repositories_test
 
 import (
 	"io/ioutil"
+	"os"
 	"path"
 	"reflect"
-	"sort"
 	"testing"
 
 	"github.com/Ryooooooga/zouch/pkg/repositories"
@@ -16,10 +16,18 @@ func writeFile(t *testing.T, filename string, content string) {
 	}
 }
 
+func makeDir(t *testing.T, filename string) {
+	if err := os.Mkdir(filename, 0755); err != nil {
+		t.Fatalf("failed to create test directory %s: %v", filename, err)
+	}
+}
+
 func TestTemplateRepository(t *testing.T) {
 	tempDir := t.TempDir()
 	writeFile(t, path.Join(tempDir, "test1.txt"), `Test Template {{ .Path }}`)
 	writeFile(t, path.Join(tempDir, "test2.txt"), `Today is {{ Now.Format "2006-01-02" }}!`)
+	makeDir(t, path.Join(tempDir, "test-dir"))
+	writeFile(t, path.Join(tempDir, "test-dir", "test3.txt"), `hello`)
 
 	repo := repositories.NewTemplateRepository(tempDir)
 
@@ -28,8 +36,6 @@ func TestTemplateRepository(t *testing.T) {
 		if err != nil {
 			t.Fatalf("repo.ListTemplates() returns an error %v", err)
 		}
-
-		sort.Strings(files)
 
 		expectedFiles := []string{"test1.txt", "test2.txt"}
 
