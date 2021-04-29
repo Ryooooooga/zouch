@@ -16,6 +16,6 @@ var (
 
 func main() {
 	if err := cli.New(fmt.Sprintf("%s (rev: %s) built at %s", version, commit, date)).Run(os.Args); err != nil {
-		color.New(color.FgRed).Fprintf(os.Stderr, "zouch: %s\n", err)
+		_, _ = color.New(color.FgRed).Fprintf(os.Stderr, "zouch: %s\n", err)
 	}
 }
