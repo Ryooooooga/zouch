@@ -82,7 +82,7 @@ func runCommand(ctx *cli.Context) error {
 	logger := newLogger(verboseFlag)
 
 	cfg := config.NewConfig()
-	templates := repositories.NewTemplateRepository(cfg.RootDir)
+	templates := repositories.NewTemplateRepository(cfg.TemplateDir)
 	renderer := renderer.NewTextTemplateRenderer()
 
 	cmd := commands.NewCommand(

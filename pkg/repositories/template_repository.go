@@ -23,7 +23,7 @@ type TemplateRepository interface {
 }
 
 type templateRepository struct {
-	rootDir string
+	templateDir string
 }
 
 const (
@@ -31,16 +31,16 @@ const (
 	DirectoryPermission = 0755
 )
 
-func NewTemplateRepository(rootDir string) TemplateRepository {
+func NewTemplateRepository(templateDir string) TemplateRepository {
 	return &templateRepository{
-		rootDir,
+		templateDir,
 	}
 }
 
 func (r *templateRepository) ListTemplates() ([]string, error) {
 	list := []string{}
 
-	files, err := ioutil.ReadDir(r.rootDir)
+	files, err := ioutil.ReadDir(r.templateDir)
 	if os.IsNotExist(err) {
 		// Template directory does not exist
 		return list, nil
@@ -89,7 +89,7 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 
 func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error) {
 	basename := path.Base(filename)
-	templatePath := path.Join(r.rootDir, basename)
+	templatePath := path.Join(r.templateDir, basename)
 
 	content, err := ioutil.ReadFile(templatePath)
 	if os.IsNotExist(err) {
@@ -106,7 +106,7 @@ func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error)
 
 func (r *templateRepository) TemplatePathOf(filename string) string {
 	basename := path.Base(filename)
-	templatePath := path.Join(r.rootDir, basename)
+	templatePath := path.Join(r.templateDir, basename)
 
 	return templatePath
 }
