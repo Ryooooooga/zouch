@@ -26,7 +26,8 @@ func makeDir(t *testing.T, filename string) {
 func TestTemplateRepository(t *testing.T) {
 	tempDir := t.TempDir()
 	writeFile(t, path.Join(tempDir, "test1.txt"), `Test Template {{ .Path }}`)
-	writeFile(t, path.Join(tempDir, "test2.txt"), `Today is {{ Now.Format "2006-01-02" }}!`)
+	writeFile(t, path.Join(tempDir, "test2.md"), `Today is {{ Now.Format "2006-01-02" }}!`)
+	writeFile(t, path.Join(tempDir, "_.md"), `Default markdown template`)
 	makeDir(t, path.Join(tempDir, "test-dir"))
 	writeFile(t, path.Join(tempDir, "test-dir", "test3.txt"), `hello`)
 
@@ -38,7 +39,7 @@ func TestTemplateRepository(t *testing.T) {
 			t.Fatalf("ListTemplates() returns an error %v", err)
 		}
 
-		expectedFiles := []string{"test1.txt", "test2.txt"}
+		expectedFiles := []string{"_.md", "test1.txt", "test2.md"}
 
 		if !reflect.DeepEqual(files, expectedFiles) {
 			t.Fatalf("files != %v, actual %v", expectedFiles, files)
@@ -61,9 +62,13 @@ func TestTemplateRepository(t *testing.T) {
 	t.Run("AddTemplate", func(t *testing.T) {
 		repo := repositories.NewTemplateRepository(tempDir)
 
-		overwritten, err := repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
+		templateFilename, overwritten, err := repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
+		expectedTemplateFilename := path.Join(tempDir, "add-test1.txt")
 		if err != nil {
 			t.Fatalf("AddTemplate() returns an error %v", err)
+		}
+		if templateFilename != expectedTemplateFilename {
+			t.Fatalf("templateFilename != %s, actual %s", expectedTemplateFilename, templateFilename)
 		}
 		if overwritten {
 			t.Fatalf("overwritten must be false")
@@ -75,19 +80,22 @@ func TestTemplateRepository(t *testing.T) {
 			t.Fatalf("ListTemplates() returns an error %v", err)
 		}
 
-		expectedFiles := []string{"add-test1.txt", "test1.txt", "test2.txt"}
+		expectedFiles := []string{"_.md", "add-test1.txt", "test1.txt", "test2.md"}
 		if !reflect.DeepEqual(files, expectedFiles) {
 			t.Fatalf("files != %v, actual %v", expectedFiles, files)
 		}
 
-		_, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
+		_, _, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
 		if err == nil || !errors.IsTemplateExistError(err) {
 			t.Fatalf("AddTemplate() returns TemplateExistError %v", err)
 		}
 
-		overwritten, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), true)
+		templateFilename, overwritten, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), true)
 		if err != nil {
 			t.Fatalf("AddTemplate() returns an error %v", err)
+		}
+		if templateFilename != expectedTemplateFilename {
+			t.Fatalf("templateFilename != %s, actual %s", expectedTemplateFilename, templateFilename)
 		}
 		if !overwritten {
 			t.Fatalf("overwritten must be true")
@@ -111,9 +119,14 @@ func TestTemplateRepository(t *testing.T) {
 				expectedContent: `Test Template {{ .Path }}`,
 			},
 			{
-				filename:        "../test2.txt",
-				expectedPath:    path.Join(tempDir, "test2.txt"),
+				filename:        "../test2.md",
+				expectedPath:    path.Join(tempDir, "test2.md"),
 				expectedContent: `Today is {{ Now.Format "2006-01-02" }}!`,
+			},
+			{
+				filename:        "../fallback.md",
+				expectedPath:    path.Join(tempDir, "_.md"),
+				expectedContent: `Default markdown template`,
 			},
 		}
 
@@ -152,17 +165,6 @@ func TestTemplateRepository(t *testing.T) {
 		}
 		if err == nil {
 			t.Fatalf("FindTemplate() must return an error")
-		}
-	})
-
-	t.Run("TemplatePathOf", func(t *testing.T) {
-		repo := repositories.NewTemplateRepository(tempDir)
-
-		templatePath := repo.TemplatePathOf("./tests/file.md")
-		expectedTemplatePath := path.Join(tempDir, "file.md")
-
-		if templatePath != expectedTemplatePath {
-			t.Fatalf("templatePath != %s, actual %s", expectedTemplatePath, templatePath)
 		}
 	})
 }
