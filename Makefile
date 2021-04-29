@@ -22,6 +22,10 @@ zouch: $(shell find . -name "*.go")
 test: deps
 	go test -v ./...
 
+.PHONY: lint
+lint: 
+	golangci-lint run -v ./...
+
 .PHONY: clean
 clean:
 	${RM} zouch

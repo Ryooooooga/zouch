@@ -1,12 +1,12 @@
 package repositories
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
-	"github.com/Ryooooooga/zouch/pkg/file"
 )
 
 type TemplateFile struct {
@@ -59,13 +59,19 @@ func (r *templateRepository) ListTemplates() ([]string, error) {
 func (r *templateRepository) AddTemplate(filename string, content []byte, overwrite bool) (bool, error) {
 	templatePath := r.TemplatePathOf(filename)
 
-	templateExists, err := file.IsFile(templatePath)
-	if err != nil {
+	var overwritten bool
+	stat, err := os.Stat(templatePath)
+	if os.IsNotExist(err) {
+		// Template does not exist (ok)
+		overwritten = false
+	} else if err != nil {
 		return false, err
-	}
-
-	if templateExists && !overwrite {
+	} else if stat.IsDir() {
+		return false, fmt.Errorf("%s is a directory", templatePath)
+	} else if !overwrite {
 		return false, errors.TemplateExistError("%s already exists", templatePath)
+	} else {
+		overwritten = true
 	}
 
 	if err := os.MkdirAll(path.Dir(templatePath), DirectoryPermission); err != nil {
@@ -73,10 +79,10 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 	}
 
 	if err := ioutil.WriteFile(templatePath, content, FilePermission); err != nil {
-		return templateExists, err
+		return false, err
 	}
 
-	return templateExists, nil
+	return overwritten, nil
 }
 
 func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error) {

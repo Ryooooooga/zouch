@@ -6,7 +6,6 @@ import (
 	"path"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
-	"github.com/Ryooooooga/zouch/pkg/file"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
 )
 
@@ -30,13 +29,16 @@ func (cmd *Command) Touch(files []string) error {
 }
 
 func (cmd *Command) touchFile(filename string) error {
-	fileExists, err := file.IsFile(filename)
-	if err != nil {
+	var fileExists bool
+	stat, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		fileExists = false
+	} else if err != nil {
 		return err
-	}
-
-	if fileExists && !cmd.Force {
+	} else if stat.IsDir() || !cmd.Force {
 		return cmd.updateTimestamp(filename)
+	} else {
+		fileExists = true
 	}
 
 	var templateExists bool
