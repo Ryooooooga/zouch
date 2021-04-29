@@ -20,7 +20,7 @@ zouch: $(shell find . -name "*.go")
 
 .PHONY: test
 test: deps
-	go test -v ./...
+	go test ./...
 
 .PHONY: lint
 lint: 

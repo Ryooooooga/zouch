@@ -5,34 +5,32 @@ import (
 	"path"
 )
 
-const (
-	RootEnvKey          = "ZOUCH_ROOT"
-	XdgConfigHomeEnvKey = "XDG_COFNIG_HOME"
-)
-
 type Config struct {
-	userHomeDir func() (string, error)
-	lookupEnv   func(key string) (string, bool)
+	RootDir     string
+	TemplateDir string
 }
 
 func NewConfig() *Config {
+	rootDir := getRootDir()
+	templateDir := path.Join(rootDir, "templates")
+
 	return &Config{
-		userHomeDir: os.UserHomeDir,
-		lookupEnv:   os.LookupEnv,
+		RootDir:     rootDir,
+		TemplateDir: templateDir,
 	}
 }
 
-func (c *Config) RootDir() string {
+func getRootDir() string {
 	// "$ZOUCH_ROOT"
-	if root, ok := c.lookupEnv(RootEnvKey); ok {
+	if root, ok := os.LookupEnv("ZOUCH_ROOT"); ok {
 		return root
 	}
 	// "$XDG_CONFIG_HOME/zouch"
-	if xdgConfigHome, ok := c.lookupEnv(XdgConfigHomeEnvKey); ok {
+	if xdgConfigHome, ok := os.LookupEnv("XDG_CONFIG_HOME"); ok {
 		return path.Join(xdgConfigHome, "zouch")
 	}
 	// "$HOME/.config/zouch"
-	home, err := c.userHomeDir()
+	home, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}

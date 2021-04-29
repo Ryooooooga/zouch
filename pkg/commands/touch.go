@@ -94,12 +94,9 @@ func (cmd *Command) renderTemplate(filename string, tpl repositories.TemplateFil
 	}
 	defer output.Close()
 
-	data := struct {
-		Filename         string
-		TemplateFilename string
-	}{
-		Filename:         filename,
-		TemplateFilename: tpl.Path,
+	data := map[string]interface{}{
+		"Filename":         filename,
+		"TemplateFilename": tpl.Path,
 	}
 
 	if err := cmd.Renderer.RenderTemplate(output, tpl, data); err != nil {

@@ -81,8 +81,8 @@ func runCommand(ctx *cli.Context) error {
 	output := os.Stdout
 	logger := newLogger(verboseFlag)
 
-	rootDir := config.NewConfig().RootDir()
-	templates := repositories.NewTemplateRepository(rootDir)
+	cfg := config.NewConfig()
+	templates := repositories.NewTemplateRepository(cfg.RootDir)
 	renderer := renderer.NewTextTemplateRenderer()
 
 	cmd := commands.NewCommand(
