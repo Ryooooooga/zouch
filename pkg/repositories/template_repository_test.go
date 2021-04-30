@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Ryooooooga/zouch/pkg/errors"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
 )
 
@@ -86,8 +85,8 @@ func TestTemplateRepository(t *testing.T) {
 		}
 
 		_, _, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
-		if err == nil || !errors.IsTemplateExistError(err) {
-			t.Fatalf("AddTemplate() returns TemplateExistError %v", err)
+		if err == nil {
+			t.Fatalf("AddTemplate() must return an error")
 		}
 
 		templateFilename, overwritten, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), true)

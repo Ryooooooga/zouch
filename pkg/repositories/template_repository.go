@@ -6,8 +6,6 @@ import (
 	"os"
 	"path"
 	"sort"
-
-	"github.com/Ryooooooga/zouch/pkg/errors"
 )
 
 type TemplateFile struct {
@@ -71,7 +69,7 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 	} else if stat.IsDir() {
 		return "", false, fmt.Errorf("%s is a directory", templatePath)
 	} else if !overwrite {
-		return "", false, errors.TemplateExistError("%s already exists", templatePath)
+		return "", false, fmt.Errorf("%s already exists", templatePath)
 	} else {
 		overwritten = true
 	}
