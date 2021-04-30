@@ -50,7 +50,7 @@ func TestRenderTemplate(t *testing.T) {
 			r := newTestTextTemplateRenderer()
 			output := bytes.NewBufferString("")
 
-			tpl := repositories.TemplateFile{
+			tpl := &repositories.TemplateFile{
 				Path:    s.testname,
 				Content: []byte(s.templateText),
 			}

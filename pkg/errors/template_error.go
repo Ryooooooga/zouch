@@ -19,21 +19,3 @@ func IsTemplateExistError(err error) bool {
 	_, ok := err.(*templateExistError)
 	return ok
 }
-
-type templateNotExistError struct {
-	message string
-}
-
-func TemplateNotExistError(format string, args ...interface{}) error {
-	return &templateNotExistError{
-		message: fmt.Sprintf(format, args...),
-	}
-}
-func (err *templateNotExistError) Error() string {
-	return err.message
-}
-
-func IsTemplateNotExistError(err error) bool {
-	_, ok := err.(*templateNotExistError)
-	return ok
-}

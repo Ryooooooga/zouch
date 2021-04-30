@@ -104,29 +104,40 @@ func TestTemplateRepository(t *testing.T) {
 
 	t.Run("FindTemplate", func(t *testing.T) {
 		scenarios := []struct {
-			filename        string
-			expectedPath    string
-			expectedContent string
+			filename string
+			expected *repositories.TemplateFile
 		}{
 			{
-				filename:        "test1.txt",
-				expectedPath:    path.Join(tempDir, "test1.txt"),
-				expectedContent: `Test Template {{ .Path }}`,
+				filename: "test1.txt",
+				expected: &repositories.TemplateFile{
+					Path:    path.Join(tempDir, "test1.txt"),
+					Content: []byte(`Test Template {{ .Path }}`),
+				},
 			},
 			{
-				filename:        "some/directory/test1.txt",
-				expectedPath:    path.Join(tempDir, "test1.txt"),
-				expectedContent: `Test Template {{ .Path }}`,
+				filename: "some/directory/test1.txt",
+				expected: &repositories.TemplateFile{
+					Path:    path.Join(tempDir, "test1.txt"),
+					Content: []byte(`Test Template {{ .Path }}`),
+				},
 			},
 			{
-				filename:        "../test2.md",
-				expectedPath:    path.Join(tempDir, "test2.md"),
-				expectedContent: `Today is {{ Now.Format "2006-01-02" }}!`,
+				filename: "../test2.md",
+				expected: &repositories.TemplateFile{
+					Path:    path.Join(tempDir, "test2.md"),
+					Content: []byte(`Today is {{ Now.Format "2006-01-02" }}!`),
+				},
 			},
 			{
-				filename:        "../fallback.md",
-				expectedPath:    path.Join(tempDir, "_.md"),
-				expectedContent: `Default markdown template`,
+				filename: "../fallback.md",
+				expected: &repositories.TemplateFile{
+					Path:    path.Join(tempDir, "_.md"),
+					Content: []byte(`Default markdown template`),
+				},
+			},
+			{
+				filename: "test3.txt",
+				expected: nil,
 			},
 		}
 
@@ -138,11 +149,8 @@ func TestTemplateRepository(t *testing.T) {
 				if err != nil {
 					t.Fatalf("FindTemplate() returns an error %v", err)
 				}
-				if tpl.Path != s.expectedPath {
-					t.Fatalf("tpl.Path != %s, actual %s", s.expectedPath, tpl.Path)
-				}
-				if string(tpl.Content) != s.expectedContent {
-					t.Fatalf("tpl.Content != %s, actual %s", s.expectedContent, string(tpl.Content))
+				if !reflect.DeepEqual(s.expected, tpl) {
+					t.Fatalf("tpl != %v, actual %v", s.expected, tpl)
 				}
 			})
 		}
@@ -151,18 +159,7 @@ func TestTemplateRepository(t *testing.T) {
 	t.Run("FailFindTemplate", func(t *testing.T) {
 		repo := repositories.NewTemplateRepository(tempDir)
 
-		_, err := repo.FindTemplate("test3.txt")
-		if !errors.IsTemplateNotExistError(err) {
-			t.Fatalf("err must be TemplateNotExistError %v", err)
-		}
-		if err == nil {
-			t.Fatalf("FindTemplate() must return an error")
-		}
-
-		_, err = repo.FindTemplate("test-dir")
-		if errors.IsTemplateNotExistError(err) {
-			t.Fatalf("err must not be TemplateNotExistError %v", err)
-		}
+		_, err := repo.FindTemplate("test-dir")
 		if err == nil {
 			t.Fatalf("FindTemplate() must return an error")
 		}

@@ -18,7 +18,7 @@ type TemplateFile struct {
 type TemplateRepository interface {
 	ListTemplates() ([]string, error)
 	AddTemplate(filename string, content []byte, overwrite bool) (templateFilename string, overwritten bool, err error)
-	FindTemplate(filename string) (TemplateFile, error)
+	FindTemplate(filename string) (*TemplateFile, error)
 }
 
 type templateRepository struct {
@@ -87,18 +87,18 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 	return templatePath, overwritten, nil
 }
 
-func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error) {
+func (r *templateRepository) FindTemplate(filename string) (*TemplateFile, error) {
 	basename := path.Base(filename)
 	templatePath := path.Join(r.templateDir, basename)
 
 	content, err := ioutil.ReadFile(templatePath)
 	if err == nil {
-		return TemplateFile{
+		return &TemplateFile{
 			Path:    templatePath,
 			Content: content,
 		}, nil
 	} else if !os.IsNotExist(err) {
-		return TemplateFile{}, err
+		return nil, err
 	}
 
 	ext := path.Ext(filename)
@@ -106,13 +106,13 @@ func (r *templateRepository) FindTemplate(filename string) (TemplateFile, error)
 
 	content, err = ioutil.ReadFile(fallbackTemplatePath)
 	if err == nil {
-		return TemplateFile{
+		return &TemplateFile{
 			Path:    fallbackTemplatePath,
 			Content: content,
 		}, nil
 	} else if !os.IsNotExist(err) {
-		return TemplateFile{}, err
+		return nil, err
 	}
 
-	return TemplateFile{}, errors.TemplateNotExistError("%s does not exist", templatePath)
+	return nil, nil
 }

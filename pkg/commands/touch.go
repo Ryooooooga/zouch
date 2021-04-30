@@ -41,14 +41,9 @@ func (cmd *Command) touchFile(filename string) error {
 		fileExists = true
 	}
 
-	var templateExists bool
 	tpl, err := cmd.Templates.FindTemplate(filename)
-	if errors.IsTemplateNotExistError(err) {
-		templateExists = false
-	} else if err != nil {
+	if err != nil {
 		return err
-	} else {
-		templateExists = true
 	}
 
 	if cmd.CreateDir {
@@ -57,7 +52,7 @@ func (cmd *Command) touchFile(filename string) error {
 		}
 	}
 
-	if templateExists {
+	if tpl != nil {
 		return cmd.renderTemplate(filename, tpl, fileExists)
 	} else if fileExists {
 		return cmd.updateTimestamp(filename)
@@ -87,7 +82,7 @@ func (cmd *Command) updateTimestamp(filename string) error {
 	return nil
 }
 
-func (cmd *Command) renderTemplate(filename string, tpl repositories.TemplateFile, overwrite bool) error {
+func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFile, overwrite bool) error {
 	output, err := os.Create(filename)
 	if err != nil {
 		return err
