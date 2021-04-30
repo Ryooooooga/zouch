@@ -28,6 +28,7 @@ func NewTextTemplateRenderer() *TextTemplateRenderer {
 			"Shell":          shell,
 			"Now":            time.Now,
 			"Base":           path.Base,
+			"Ext":            path.Ext,
 			"Dir":            path.Dir,
 			"Abs":            filepath.Abs,
 			"Getwd":          os.Getwd,
@@ -38,6 +39,8 @@ func NewTextTemplateRenderer() *TextTemplateRenderer {
 			"UpperSnakeCase": strcase.UpperSnakeCase,
 			"KebabCase":      strcase.KebabCase,
 			"UpperKebabCase": strcase.UpperKebabCase,
+			"Replace":        strings.Replace,
+			"ReplaceAll":     strings.ReplaceAll,
 		},
 	}
 }
