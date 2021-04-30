@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/Ryooooooga/zouch/pkg/config"
 	"github.com/Ryooooooga/zouch/pkg/renderer"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
 )
@@ -12,6 +13,7 @@ import (
 type Command struct {
 	Output    io.Writer
 	Logger    *log.Logger
+	Config    *config.Config
 	Templates repositories.TemplateRepository
 	Renderer  renderer.TemplateRenderer
 	CreateDir bool
@@ -23,6 +25,7 @@ type Command struct {
 func NewCommand(
 	output io.Writer,
 	logger *log.Logger,
+	config *config.Config,
 	templates repositories.TemplateRepository,
 	renderer renderer.TemplateRenderer,
 	createDir bool,
@@ -31,6 +34,7 @@ func NewCommand(
 	return &Command{
 		Output:    output,
 		Logger:    logger,
+		Config:    config,
 		Templates: templates,
 		Renderer:  renderer,
 		CreateDir: createDir,

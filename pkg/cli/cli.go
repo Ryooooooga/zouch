@@ -27,6 +27,12 @@ func New(version string) *cli.App {
 			Required: false,
 		},
 		&cli.BoolFlag{
+			Name:     "preview",
+			Aliases:  []string{"p"},
+			Usage:    "show template preview",
+			Required: false,
+		},
+		&cli.BoolFlag{
 			Name:     "add",
 			Aliases:  []string{"A"},
 			Usage:    "add [files...] as new templates",
@@ -54,7 +60,8 @@ func New(version string) *cli.App {
 
 	const usage = `zouch [files...]
    zouch --list
-   zouch --add  [files...]`
+   zouch --preview [files...]
+   zouch --add     [files...]`
 
 	return &cli.App{
 		Name:                   "zouch",
@@ -71,6 +78,7 @@ func New(version string) *cli.App {
 
 func runCommand(ctx *cli.Context) error {
 	listFlag := ctx.Bool("list")
+	previewFlag := ctx.Bool("preview")
 	addFlag := ctx.Bool("add")
 
 	createDirFlag := ctx.Bool("r")
@@ -88,6 +96,7 @@ func runCommand(ctx *cli.Context) error {
 	cmd := commands.NewCommand(
 		output,
 		logger,
+		cfg,
 		templates,
 		renderer,
 		createDirFlag,
@@ -97,6 +106,8 @@ func runCommand(ctx *cli.Context) error {
 	var err error
 	if listFlag {
 		err = cmd.List(files)
+	} else if previewFlag {
+		err = cmd.Preview(files)
 	} else if addFlag {
 		err = cmd.Add(files)
 	} else {
