@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -25,22 +26,23 @@ type TextTemplateRenderer struct {
 func NewTextTemplateRenderer() *TextTemplateRenderer {
 	return &TextTemplateRenderer{
 		FuncMap: template.FuncMap{
-			"Shell":          shell,
-			"Now":            time.Now,
-			"Base":           path.Base,
-			"Ext":            path.Ext,
-			"Dir":            path.Dir,
-			"Abs":            filepath.Abs,
-			"Getwd":          os.Getwd,
-			"Getenv":         os.Getenv,
-			"LowerCamelCase": strcase.LowerCamelCase,
-			"UpperCamelCase": strcase.UpperCamelCase,
-			"SnakeCase":      strcase.SnakeCase,
-			"UpperSnakeCase": strcase.UpperSnakeCase,
-			"KebabCase":      strcase.KebabCase,
-			"UpperKebabCase": strcase.UpperKebabCase,
-			"Replace":        strings.Replace,
-			"ReplaceAll":     strings.ReplaceAll,
+			"Shell":           shell,
+			"Now":             time.Now,
+			"Base":            path.Base,
+			"Ext":             path.Ext,
+			"Dir":             path.Dir,
+			"Abs":             filepath.Abs,
+			"Getwd":           os.Getwd,
+			"Getenv":          os.Getenv,
+			"LowerCamelCase":  strcase.LowerCamelCase,
+			"UpperCamelCase":  strcase.UpperCamelCase,
+			"SnakeCase":       strcase.SnakeCase,
+			"UpperSnakeCase":  strcase.UpperSnakeCase,
+			"KebabCase":       strcase.KebabCase,
+			"UpperKebabCase":  strcase.UpperKebabCase,
+			"Replace":         strings.Replace,
+			"ReplaceAll":      strings.ReplaceAll,
+			"RegexReplaceAll": regexReplace,
 		},
 	}
 }
@@ -67,4 +69,13 @@ func shell(command string) (string, error) {
 	output = strings.TrimSuffix(output, "\n")
 	output = strings.TrimSuffix(output, "\r")
 	return output, nil
+}
+
+func regexReplace(src string, pattern string, replace string) (string, error) {
+	regex, err := regexp.Compile(pattern)
+	if err != nil {
+		return "", err
+	}
+
+	return regex.ReplaceAllString(src, replace), nil
 }
