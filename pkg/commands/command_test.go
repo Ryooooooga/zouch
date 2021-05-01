@@ -2,6 +2,7 @@ package commands_test
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"path"
 	"sort"
@@ -68,7 +69,7 @@ func (r *testTemplateRepository) AddTemplate(filename string, content []byte, ov
 
 	_, ok := r.Files[basename]
 	if ok && !overwrite {
-		return "", false, nil
+		return "", false, fmt.Errorf("%s already exists", basename)
 	}
 
 	r.Files[basename] = string(content)
