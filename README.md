@@ -26,3 +26,37 @@ GLOBAL OPTIONS:
    --help, -h     show help (default: false)
    --version, -v  print the version (default: false)
 ```
+
+## Examples
+
+```sh
+$ cat ~/.config/zouch/templates/today.txt
+Today is {{ Now.Format "2006-01-02" }}!
+
+$ zouch today.txt
+
+$ cat today.txt
+Today is 2021-05-02!
+```
+
+## Installation
+
+### From source
+
+```sh
+$ go get -u github.com/Ryooooooga/zouch
+```
+
+### From precompiled binary
+
+https://github.com/Ryooooooga/zouch/releases/
+
+### Using [zinit](https://github.com/zdharma/zinit)
+
+Add the following to your `.zshrc`.
+
+```sh
+zinit ice lucid wait"0" as"program" from"gh-r" \
+    pick"zouch*/zouch"
+zinit light 'Ryooooooga/zouch'
+```
