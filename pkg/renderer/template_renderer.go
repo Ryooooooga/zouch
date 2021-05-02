@@ -34,6 +34,8 @@ func NewTextTemplateRenderer() *TextTemplateRenderer {
 			"Abs":             filepath.Abs,
 			"Getwd":           os.Getwd,
 			"Getenv":          os.Getenv,
+			"HasPrefix":       strings.HasPrefix,
+			"HasSuffix":       strings.HasSuffix,
 			"LowerCamelCase":  strcase.LowerCamelCase,
 			"UpperCamelCase":  strcase.UpperCamelCase,
 			"SnakeCase":       strcase.SnakeCase,
