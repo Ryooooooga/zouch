@@ -7,6 +7,7 @@ import (
 
 	"github.com/Ryooooooga/zouch/pkg/renderer"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
+	"github.com/stretchr/testify/assert"
 )
 
 func newTestTextTemplateRenderer() *renderer.TextTemplateRenderer {
@@ -55,13 +56,9 @@ func TestRenderTemplate(t *testing.T) {
 				Content: []byte(s.templateText),
 			}
 
-			if err := r.RenderTemplate(output, tpl, s.data); err != nil {
-				t.Fatalf("t.RenderTemplate() returns an error %v", err)
-			}
-
-			if result := output.String(); result != s.expectedOutput {
-				t.Fatalf("result != %s, actual %s", s.expectedOutput, result)
-			}
+			err := r.RenderTemplate(output, tpl, s.data)
+			assert.Nil(t, err)
+			assert.Equal(t, s.expectedOutput, output.String())
 		})
 	}
 }

@@ -4,8 +4,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func prepareTestDir(t *testing.T) string {
@@ -48,18 +49,11 @@ func TestAdd(t *testing.T) {
 			cmd := newTestCommand(t, false, s.force)
 
 			err := cmd.Add(s.files)
-			if err != nil {
-				t.Fatalf("cmd.Add() returns an error %v", err)
-			}
+			assert.Nil(t, err)
 
 			templateFiles, err := cmd.Templates.ListTemplates()
-			if err != nil {
-				t.Fatalf("cmd.Templates.ListTemplates() returns an error %v", err)
-			}
-
-			if !reflect.DeepEqual(templateFiles, s.expectedTemplates) {
-				t.Fatalf("templateFiles != %v, actual %v", s.expectedTemplates, templateFiles)
-			}
+			assert.Nil(t, err)
+			assert.Equal(t, s.expectedTemplates, templateFiles)
 		})
 	}
 }
@@ -100,10 +94,7 @@ func TestFailAdd(t *testing.T) {
 			cmd := newTestCommand(t, false, s.force)
 
 			err := cmd.Add(s.files)
-			if err == nil {
-				tpl, _ := cmd.Templates.FindTemplate("test.txt")
-				t.Fatalf("cmd.Add() must return an error %v", string(tpl.Content))
-			}
+			assert.Error(t, err)
 		})
 	}
 }

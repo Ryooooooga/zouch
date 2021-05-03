@@ -3,6 +3,8 @@ package commands_test
 import (
 	"bytes"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPreview(t *testing.T) {
@@ -32,14 +34,9 @@ func TestPreview(t *testing.T) {
 		t.Run(s.testname, func(t *testing.T) {
 			cmd := newTestCommand(t, false, false)
 
-			if err := cmd.Preview(s.files); err != nil {
-				t.Fatalf("cmd.Preview() returns an error %v", err)
-			}
-
-			result := cmd.Output.(*bytes.Buffer).String()
-			if result != s.expectedOutput {
-				t.Fatalf("result != %s, actual %s", s.expectedOutput, result)
-			}
+			err := cmd.Preview(s.files)
+			assert.Nil(t, err)
+			assert.Equal(t, s.expectedOutput, cmd.Output.(*bytes.Buffer).String())
 		})
 	}
 }
@@ -66,10 +63,8 @@ func TestFailPreview(t *testing.T) {
 	for _, s := range scenarios {
 		t.Run(s.testname, func(t *testing.T) {
 			cmd := newTestCommand(t, false, false)
-
-			if err := cmd.Preview(s.args); err == nil {
-				t.Fatalf("cmd.Preview() must return an error")
-			}
+			err := cmd.Preview(s.args)
+			assert.Error(t, err)
 		})
 	}
 }

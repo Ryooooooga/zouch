@@ -3,6 +3,8 @@ package config
 import (
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRootDir(t *testing.T) {
@@ -58,14 +60,9 @@ func TestRootDir(t *testing.T) {
 			setOrUnsetEnv(t, "ZOUCH_ROOT", s.envs.zouchRoot)
 
 			c := NewConfig()
-
-			if c.RootDir != s.expectedRootDir {
-				t.Fatalf("expected c.RootDir == %s, actual %s", s.expectedRootDir, c.RootDir)
-			}
-
-			if c.TemplateDir != s.expectedTemplateDir {
-				t.Fatalf("expected c.TemplateDir == %s, actual %s", s.expectedTemplateDir, c.TemplateDir)
-			}
+			assert.NotNil(t, c)
+			assert.Equal(t, s.expectedRootDir, c.RootDir)
+			assert.Equal(t, s.expectedTemplateDir, c.TemplateDir)
 		})
 	}
 }

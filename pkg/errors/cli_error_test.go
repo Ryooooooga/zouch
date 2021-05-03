@@ -5,25 +5,20 @@ import (
 	"testing"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestShowHelpAndExitError(t *testing.T) {
 	t.Run("ShowHelpAndExitError.Error()", func(t *testing.T) {
 		err := errors.ShowHelpAndExitError("test error message")
-		if err.Error() != "test error message" {
-			t.Fatalf("err.Error() != %v, actual %v", "test error message", err.Error())
-		}
+		assert.Equal(t, "test error message", err.Error())
 	})
 
 	t.Run("IsShowHelpAndExitError", func(t *testing.T) {
 		err := errors.ShowHelpAndExitError("")
-		if !errors.IsShowHelpAndExitError(err) {
-			t.Fatalf("IsShowHelpAndExitError(err) must return true")
-		}
+		assert.True(t, errors.IsShowHelpAndExitError(err))
 
 		err = fmt.Errorf("")
-		if errors.IsShowHelpAndExitError(err) {
-			t.Fatalf("IsShowHelpAndExitError(err) must return false")
-		}
+		assert.False(t, errors.IsShowHelpAndExitError(err))
 	})
 }

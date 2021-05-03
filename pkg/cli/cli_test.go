@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Ryooooooga/zouch/pkg/cli"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHelpAndVersion(t *testing.T) {
@@ -38,13 +39,10 @@ func TestHelpAndVersion(t *testing.T) {
 			app := cli.New("test")
 			app.Writer = writer
 
-			if err := app.Run(s.args); err != nil {
-				t.Fatal("must not return an error")
-			}
+			err := app.Run(s.args)
+			assert.Nil(t, err)
 
-			if output := writer.String(); len(output) == 0 {
-				t.Fatal("must show something")
-			}
+			assert.NotEmpty(t, writer.String())
 		})
 	}
 }

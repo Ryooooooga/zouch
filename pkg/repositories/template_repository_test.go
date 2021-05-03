@@ -4,10 +4,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"reflect"
 	"testing"
 
 	"github.com/Ryooooooga/zouch/pkg/repositories"
+	"github.com/stretchr/testify/assert"
 )
 
 func writeFile(t *testing.T, filename string, content string) {
@@ -34,71 +34,44 @@ func TestTemplateRepository(t *testing.T) {
 		repo := repositories.NewTemplateRepository(tempDir)
 
 		files, err := repo.ListTemplates()
-		if err != nil {
-			t.Fatalf("ListTemplates() returns an error %v", err)
-		}
+		assert.Nil(t, err)
 
 		expectedFiles := []string{"_.md", "test1.txt", "test2.md"}
-
-		if !reflect.DeepEqual(files, expectedFiles) {
-			t.Fatalf("files != %v, actual %v", expectedFiles, files)
-		}
+		assert.Equal(t, expectedFiles, files)
 	})
 
 	t.Run("ListTemplateNotExists", func(t *testing.T) {
 		repo := repositories.NewTemplateRepository(path.Join(tempDir, "NO_SUCH_DIR"))
 
 		files, err := repo.ListTemplates()
-		if err != nil {
-			t.Fatalf("ListTemplates() returns an error %v", err)
-		}
-
-		if len(files) != 0 {
-			t.Fatalf("files != {}, actual %v", files)
-		}
+		assert.Nil(t, err)
+		assert.Empty(t, files)
 	})
 
 	t.Run("AddTemplate", func(t *testing.T) {
 		repo := repositories.NewTemplateRepository(tempDir)
 
 		templateFilename, overwritten, err := repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
+		assert.Nil(t, err)
+
 		expectedTemplateFilename := path.Join(tempDir, "add-test1.txt")
-		if err != nil {
-			t.Fatalf("AddTemplate() returns an error %v", err)
-		}
-		if templateFilename != expectedTemplateFilename {
-			t.Fatalf("templateFilename != %s, actual %s", expectedTemplateFilename, templateFilename)
-		}
-		if overwritten {
-			t.Fatalf("overwritten must be false")
-		}
+		assert.Equal(t, expectedTemplateFilename, templateFilename)
+		assert.False(t, overwritten)
 		defer os.Remove(path.Join(tempDir, "add-test1.txt"))
 
 		files, err := repo.ListTemplates()
-		if err != nil {
-			t.Fatalf("ListTemplates() returns an error %v", err)
-		}
+		assert.Nil(t, err)
 
 		expectedFiles := []string{"_.md", "add-test1.txt", "test1.txt", "test2.md"}
-		if !reflect.DeepEqual(files, expectedFiles) {
-			t.Fatalf("files != %v, actual %v", expectedFiles, files)
-		}
+		assert.Equal(t, expectedFiles, files)
 
 		_, _, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), false)
-		if err == nil {
-			t.Fatalf("AddTemplate() must return an error")
-		}
+		assert.Error(t, err)
 
 		templateFilename, overwritten, err = repo.AddTemplate("add-test1.txt", []byte("add-test1"), true)
-		if err != nil {
-			t.Fatalf("AddTemplate() returns an error %v", err)
-		}
-		if templateFilename != expectedTemplateFilename {
-			t.Fatalf("templateFilename != %s, actual %s", expectedTemplateFilename, templateFilename)
-		}
-		if !overwritten {
-			t.Fatalf("overwritten must be true")
-		}
+		assert.Nil(t, err)
+		assert.Equal(t, expectedTemplateFilename, templateFilename)
+		assert.True(t, overwritten)
 	})
 
 	t.Run("FindTemplate", func(t *testing.T) {
@@ -145,12 +118,8 @@ func TestTemplateRepository(t *testing.T) {
 				repo := repositories.NewTemplateRepository(tempDir)
 
 				tpl, err := repo.FindTemplate(s.filename)
-				if err != nil {
-					t.Fatalf("FindTemplate() returns an error %v", err)
-				}
-				if !reflect.DeepEqual(s.expected, tpl) {
-					t.Fatalf("tpl != %v, actual %v", s.expected, tpl)
-				}
+				assert.Nil(t, err)
+				assert.Equal(t, s.expected, tpl)
 			})
 		}
 	})
@@ -159,8 +128,6 @@ func TestTemplateRepository(t *testing.T) {
 		repo := repositories.NewTemplateRepository(tempDir)
 
 		_, err := repo.FindTemplate("test-dir")
-		if err == nil {
-			t.Fatalf("FindTemplate() must return an error")
-		}
+		assert.Error(t, err)
 	})
 }
