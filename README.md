@@ -51,7 +51,7 @@ Today is 2021-05-02!
 
 | name               | signature                                     | implementation           |
 |:-------------------|:----------------------------------------------|:-------------------------|
-| `Now`              | `func() *time.Time`                           | `time.Now`               |
+| `Now`              | `func() time.Time`                            | `time.Now`               |
 | `Base`             | `func(string) string`                         | `path.Base`              |
 | `Ext`              | `func(string) string`                         | `path.Ext`               |
 | `Dir`              | `func(string) string`                         | `path.Dir`               |
