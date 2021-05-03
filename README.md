@@ -39,6 +39,38 @@ $ cat today.txt
 Today is 2021-05-02!
 ```
 
+### Variables
+
+| name                | type      | e.g.                                  |
+|:--------------------|:----------|:--------------------------------------|
+| `.Filename`         | `string`  | `today.txt`                           |
+| `.TemplateFilename` | `string`  | `~/.config/zouch/templates/today.txt` |
+
+
+### Functions
+
+| name               | signature                                     | implementation           |
+|:-------------------|:----------------------------------------------|:-------------------------|
+| `Now`              | `func() *time.Time`                           | `time.Now`               |
+| `Base`             | `func(string) string`                         | `path.Base`              |
+| `Ext`              | `func(string) string`                         | `path.Ext`               |
+| `Dir`              | `func(string) string`                         | `path.Dir`               |
+| `Abs`              | `func(string) (string, error)`                | `filepath.Abs`           |
+| `Getwd`            | `func(string) (string, error)`                | `os.Getwd`               |
+| `Getenv`           | `func(string) string`                         | `os.Getenv`              |
+| `HasPrefix`        | `func(string) bool`                           | `strings.HasPrefix`      |
+| `HasSuffix`        | `func(string) bool`                           | `strings.HasSuffix`      |
+| `LowerCamelCase`   | `func(string) string`                         | `strcase.LowerCamelCase` |
+| `UpperCamelCase`   | `func(string) string`                         | `strcase.UpperCamelCase` |
+| `SnakeCase`        | `func(string) string`                         | `strcase.SnakeCase`      |
+| `UpperSnakeCase`   | `func(string) string`                         | `strcase.UpperSnakeCase` |
+| `KebabCase`        | `func(string) string`                         | `strcase.KebabCase`      |
+| `UpperKebabCase`   | `func(string) string`                         | `strcase.UpperKebabCase` |
+| `Replace`          | `func(string, string, string, int) string`    | `strings.Replace`        |
+| `ReplaceAll`       | `func(string, string, string) string`         | `strings.ReplaceAll`     |
+| `Shell`            | `func(string) (string, error)`                | `exec.Command("/bin/sh", "-c", command).Output()`        |
+| `RegexReplaceAll`  | `func(string, string, string) (string, error)`| `regexp.Compile(pattern).ReplaceAllString(src, replace)` |
+
 ## Installation
 
 ### From source
