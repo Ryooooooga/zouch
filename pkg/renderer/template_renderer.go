@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"os/exec"
@@ -62,12 +63,18 @@ func (r *TextTemplateRenderer) RenderTemplate(output io.Writer, templateFile *re
 }
 
 func shell(command string) (string, error) {
-	bytes, err := exec.Command("/bin/sh", "-c", command).Output()
+	var outBuffer bytes.Buffer
+	cmd := exec.Command("/bin/sh", "-c", command)
+	cmd.Stdout = &outBuffer
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	err := cmd.Run()
 	if err != nil {
 		return "", err
 	}
 
-	output := string(bytes)
+	output := outBuffer.String()
 	output = strings.TrimSuffix(output, "\n")
 	output = strings.TrimSuffix(output, "\r")
 	return output, nil
