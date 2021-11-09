@@ -60,6 +60,8 @@ Today is 2021-05-02!
 | `Getenv`           | `func(string) string`                                              | `os.Getenv`                                              |
 | `HasPrefix`        | `func(string) bool`                                                | `strings.HasPrefix`                                      |
 | `HasSuffix`        | `func(string) bool`                                                | `strings.HasSuffix`                                      |
+| `TrimPrefix`       | `func(string, string) string`                                      | `strings.TrimPrefix`                                     |
+| `TrimSuffix`       | `func(string, string) string`                                      | `strings.TrimSuffix`                                     |
 | `LowerCamelCase`   | `func(string) string`                                              | `strcase.LowerCamelCase`                                 |
 | `UpperCamelCase`   | `func(string) string`                                              | `strcase.UpperCamelCase`                                 |
 | `SnakeCase`        | `func(string) string`                                              | `strcase.SnakeCase`                                      |
