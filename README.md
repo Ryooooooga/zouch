@@ -94,3 +94,9 @@ zinit ice lucid wait"0" as"program" from"gh-r" \
     pick"zouch*/zouch"
 zinit light 'Ryooooooga/zouch'
 ```
+
+### Using Homebrew
+
+```sh
+$ brew install ryooooooga/tap/zouch
+```
