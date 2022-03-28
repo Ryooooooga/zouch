@@ -27,3 +27,4 @@ brews:
     folder: Formula
     homepage: https://github.com/Ryooooooga/zouch
     install: bin.install "zouch"
+    test: system "#{bin}/zouch", "--version"
