@@ -23,7 +23,7 @@ test: deps
 	go test ./...
 
 .PHONY: lint
-lint: 
+lint:
 	golangci-lint run -v ./...
 
 .PHONY: clean
