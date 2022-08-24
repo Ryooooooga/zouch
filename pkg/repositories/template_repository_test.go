@@ -1,7 +1,6 @@
 package repositories_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -11,7 +10,7 @@ import (
 )
 
 func writeFile(t *testing.T, filename string, content string) {
-	if err := ioutil.WriteFile(filename, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(filename, []byte(content), 0644); err != nil {
 		t.Fatalf("failed to create test file %s: %v", filename, err)
 	}
 }

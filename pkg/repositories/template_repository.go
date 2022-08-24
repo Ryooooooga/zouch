@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"sort"
@@ -37,7 +36,7 @@ func NewTemplateRepository(templateDir string) TemplateRepository {
 func (r *templateRepository) ListTemplates() ([]string, error) {
 	list := []string{}
 
-	files, err := ioutil.ReadDir(r.templateDir)
+	files, err := os.ReadDir(r.templateDir)
 	if os.IsNotExist(err) {
 		// Template directory does not exist
 		return list, nil
@@ -78,7 +77,7 @@ func (r *templateRepository) AddTemplate(filename string, content []byte, overwr
 		return "", false, err
 	}
 
-	if err := ioutil.WriteFile(templatePath, content, FilePermission); err != nil {
+	if err := os.WriteFile(templatePath, content, FilePermission); err != nil {
 		return "", false, err
 	}
 
@@ -89,7 +88,7 @@ func (r *templateRepository) FindTemplate(filename string) (*TemplateFile, error
 	basename := path.Base(filename)
 	templatePath := path.Join(r.templateDir, basename)
 
-	content, err := ioutil.ReadFile(templatePath)
+	content, err := os.ReadFile(templatePath)
 	if err == nil {
 		return &TemplateFile{
 			Path:    templatePath,
@@ -102,7 +101,7 @@ func (r *templateRepository) FindTemplate(filename string) (*TemplateFile, error
 	ext := path.Ext(filename)
 	fallbackTemplatePath := path.Join(r.templateDir, "_"+ext)
 
-	content, err = ioutil.ReadFile(fallbackTemplatePath)
+	content, err = os.ReadFile(fallbackTemplatePath)
 	if err == nil {
 		return &TemplateFile{
 			Path:    fallbackTemplatePath,

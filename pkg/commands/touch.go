@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -62,7 +61,7 @@ func (cmd *Command) touchFile(filename string) error {
 }
 
 func (cmd *Command) createNewFile(filename string) error {
-	if err := ioutil.WriteFile(filename, []byte{}, FilePermission); err != nil {
+	if err := os.WriteFile(filename, []byte{}, FilePermission); err != nil {
 		return err
 	}
 

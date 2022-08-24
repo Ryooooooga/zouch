@@ -1,7 +1,6 @@
 package commands_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -13,9 +12,9 @@ func prepareTestDir(t *testing.T) string {
 	tempDir := t.TempDir()
 
 	_ = os.Mkdir(path.Join(tempDir, "test-dir"), 0755)
-	_ = ioutil.WriteFile(path.Join(tempDir, "test.txt"), []byte("test"), 0644)
-	_ = ioutil.WriteFile(path.Join(tempDir, "test2.txt"), []byte("test2"), 0644)
-	_ = ioutil.WriteFile(path.Join(tempDir, "test-dir/hello.txt"), []byte("hello"), 0644)
+	_ = os.WriteFile(path.Join(tempDir, "test.txt"), []byte("test"), 0644)
+	_ = os.WriteFile(path.Join(tempDir, "test2.txt"), []byte("test2"), 0644)
+	_ = os.WriteFile(path.Join(tempDir, "test-dir/hello.txt"), []byte("hello"), 0644)
 
 	return tempDir
 }

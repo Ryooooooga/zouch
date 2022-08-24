@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
@@ -23,7 +22,7 @@ func (cmd *Command) Add(files []string) error {
 }
 
 func (cmd *Command) addFile(filename string) error {
-	content, err := ioutil.ReadFile(filename)
+	content, err := os.ReadFile(filename)
 	if os.IsNotExist(err) {
 		return fmt.Errorf("%s does not exist", filename)
 	} else if err != nil {
