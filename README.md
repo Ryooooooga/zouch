@@ -44,7 +44,9 @@ Today is 2021-05-02!
 | name                | type      | e.g.                                  |
 |:--------------------|:----------|:--------------------------------------|
 | `.Filename`         | `string`  | `today.txt`                           |
+| `.Filepath`         | `string`  | full path of `.Filename`              |
 | `.TemplateFilename` | `string`  | `~/.config/zouch/templates/today.txt` |
+| `.TemplateFilepath` | `string`  | same as `.TemplateFilename`           |
 
 
 ### Functions

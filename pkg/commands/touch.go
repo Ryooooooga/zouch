@@ -3,6 +3,7 @@ package commands
 import (
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/Ryooooooga/zouch/pkg/errors"
 	"github.com/Ryooooooga/zouch/pkg/repositories"
@@ -88,7 +89,10 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	}
 	defer output.Close()
 
-	data := templateVariables(filename, tpl)
+	data, err := templateVariables(filename, tpl)
+	if err != nil {
+		return err
+	}
 
 	if err := cmd.Renderer.RenderTemplate(output, tpl, data); err != nil {
 		return err
@@ -102,9 +106,16 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	return nil
 }
 
-func templateVariables(filename string, tpl *repositories.TemplateFile) map[string]any {
+func templateVariables(filename string, tpl *repositories.TemplateFile) (map[string]any, error) {
+	filepath, err := filepath.Abs(filename)
+	if err != nil {
+		return nil, err
+	}
+
 	return map[string]any{
 		"Filename":         filename,
+		"Filepath":         filepath,
 		"TemplateFilename": tpl.Path,
-	}
+		"TemplateFilepath": tpl.Path,
+	}, nil
 }
