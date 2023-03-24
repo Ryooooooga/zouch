@@ -102,8 +102,8 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	return nil
 }
 
-func templateVariables(filename string, tpl *repositories.TemplateFile) map[interface{}]interface{} {
-	return map[interface{}]interface{}{
+func templateVariables(filename string, tpl *repositories.TemplateFile) map[string]any {
+	return map[string]any{
 		"Filename":         filename,
 		"TemplateFilename": tpl.Path,
 	}

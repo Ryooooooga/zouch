@@ -17,7 +17,7 @@ import (
 )
 
 type TemplateRenderer interface {
-	RenderTemplate(output io.Writer, templateFile *repositories.TemplateFile, data interface{}) error
+	RenderTemplate(output io.Writer, templateFile *repositories.TemplateFile, data any) error
 }
 
 type TextTemplateRenderer struct {
@@ -52,7 +52,7 @@ func NewTextTemplateRenderer() *TextTemplateRenderer {
 	}
 }
 
-func (r *TextTemplateRenderer) RenderTemplate(output io.Writer, templateFile *repositories.TemplateFile, data interface{}) error {
+func (r *TextTemplateRenderer) RenderTemplate(output io.Writer, templateFile *repositories.TemplateFile, data any) error {
 	name := path.Base(templateFile.Path)
 	content := string(templateFile.Content)
 
