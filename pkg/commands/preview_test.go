@@ -35,7 +35,7 @@ func TestPreview(t *testing.T) {
 			cmd := newTestCommand(t, false, false)
 
 			err := cmd.Preview(s.files)
-			assert.Nil(t, err)
+			assert.NoError(t, err)
 			assert.Equal(t, s.expectedOutput, cmd.Output.(*bytes.Buffer).String())
 		})
 	}

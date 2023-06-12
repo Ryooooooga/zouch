@@ -89,10 +89,7 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	}
 	defer output.Close()
 
-	data, err := templateVariables(filename, tpl)
-	if err != nil {
-		return err
-	}
+	data := templateVariables(filename, tpl)
 
 	if err := cmd.Renderer.RenderTemplate(output, tpl, data); err != nil {
 		return err
@@ -106,10 +103,10 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	return nil
 }
 
-func templateVariables(filename string, tpl *repositories.TemplateFile) (map[string]any, error) {
+func templateVariables(filename string, tpl *repositories.TemplateFile) map[string]any {
 	filepath, err := filepath.Abs(filename)
 	if err != nil {
-		return nil, err
+		filepath = filename
 	}
 
 	return map[string]any{
@@ -117,5 +114,5 @@ func templateVariables(filename string, tpl *repositories.TemplateFile) (map[str
 		"Filepath":         filepath,
 		"TemplateFilename": tpl.Path,
 		"TemplateFilepath": tpl.Path,
-	}, nil
+	}
 }

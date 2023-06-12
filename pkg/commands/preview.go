@@ -29,10 +29,7 @@ func (cmd *Command) previewFile(filename string) error {
 		return fmt.Errorf("template for %s does not exist", filename)
 	}
 
-	data, err := templateVariables(filename, tpl)
-	if err != nil {
-		return err
-	}
+	data := templateVariables(filename, tpl)
 
 	if err := cmd.Renderer.RenderTemplate(cmd.Output, tpl, data); err != nil {
 		return err
