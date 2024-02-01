@@ -1,6 +1,6 @@
 export GO111MODULE=on
 
-VERSION := $(shell git describe --tags --abbrev=0)
+VERSION := $(shell git describe --tags)
 COMMIT  := $(shell git rev-parse --short HEAD)
 DATE    := $(shell date "+%Y-%m-%d %H:%M:%S")
 LDFLAGS := -X "main.version=${VERSION}"

@@ -59,9 +59,9 @@ func New(version string) *cli.App {
 	}
 
 	const usage = `zouch [files...]
-   zouch --list
-   zouch --preview [files...]
-   zouch --add     [files...]`
+zouch --list
+zouch --preview [files...]
+zouch --add     [files...]`
 
 	return &cli.App{
 		Name:                   "zouch",
