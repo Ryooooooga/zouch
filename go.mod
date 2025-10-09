@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/fatih/color v1.18.0
 	github.com/stoewer/go-strcase v1.3.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.27.1
 )
 
