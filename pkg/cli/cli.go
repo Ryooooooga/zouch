@@ -116,7 +116,7 @@ func runCommand(ctx *cli.Context) error {
 
 	if errors.IsShowHelpAndExitError(err) {
 		err = cli.ShowAppHelp(ctx)
-		fmt.Fprintln(ctx.App.Writer)
+		_, _ = fmt.Fprintln(ctx.App.Writer)
 	}
 
 	return err

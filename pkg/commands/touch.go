@@ -87,7 +87,9 @@ func (cmd *Command) renderTemplate(filename string, tpl *repositories.TemplateFi
 	if err != nil {
 		return err
 	}
-	defer output.Close()
+	defer func() {
+		_ = output.Close()
+	}()
 
 	data := templateVariables(filename, tpl)
 

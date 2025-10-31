@@ -56,7 +56,9 @@ func TestTemplateRepository(t *testing.T) {
 		expectedTemplateFilename := path.Join(tempDir, "add-test1.txt")
 		assert.Equal(t, expectedTemplateFilename, templateFilename)
 		assert.False(t, overwritten)
-		defer os.Remove(path.Join(tempDir, "add-test1.txt"))
+		defer func() {
+			_ = os.Remove(path.Join(tempDir, "add-test1.txt"))
+		}()
 
 		files, err := repo.ListTemplates()
 		assert.Nil(t, err)

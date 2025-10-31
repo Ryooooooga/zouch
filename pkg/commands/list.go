@@ -11,7 +11,7 @@ func (cmd *Command) List(files []string) error {
 	}
 
 	for _, tpl := range templateFiles {
-		fmt.Fprintf(cmd.Output, "%s\n", tpl)
+		_, _ = fmt.Fprintf(cmd.Output, "%s\n", tpl)
 	}
 
 	return nil
