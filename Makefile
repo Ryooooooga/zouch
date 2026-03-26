@@ -12,7 +12,7 @@ all: deps zouch
 
 .PHONY: deps
 deps:
-	go get -d -v
+	go get -v
 	go mod tidy
 
 zouch: $(shell find . -name "*.go")
