@@ -2,6 +2,8 @@ module github.com/Ryooooooga/zouch
 
 go 1.25.0
 
+toolchain go1.26.1
+
 require (
 	github.com/fatih/color v1.19.0
 	github.com/stoewer/go-strcase v1.3.1
