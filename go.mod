@@ -6,7 +6,7 @@ toolchain go1.26.1
 
 require (
 	github.com/fatih/color v1.19.0
-	github.com/stoewer/go-strcase v1.3.1
+	github.com/stoewer/go-strcase v1.4.0
 	github.com/stretchr/testify v1.12.1
 	github.com/urfave/cli/v2 v2.27.7
 )
